@@ -59,6 +59,14 @@ namespace StarterAssets
 				raiseArm = !raiseArm;
 			}
         }
+
+		public void OnTogglePatrol(InputValue value)
+        {
+			if (value.isPressed)
+            {
+				GameManager.instance.TogglePatrolling();
+            }
+        }
 #endif
 
 

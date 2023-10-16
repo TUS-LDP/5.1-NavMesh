@@ -6,7 +6,7 @@ public class GameManager : MonoBehaviour
 {
     static public GameManager instance;
 
-    public bool partollingEnabled;
+    public bool patrollingEnabled;
 
     // Demonstration code using events:
     //      Delegates: https://unity3d.com/learn/tutorials/topics/scripting/delegates
@@ -30,12 +30,12 @@ public class GameManager : MonoBehaviour
         }
 
         // Set patrollingEnabled to true by default
-        partollingEnabled = true;
+        patrollingEnabled = true;
     }
 
     public void TogglePatrolling()
     {
-        this.partollingEnabled = !this.partollingEnabled;
+        this.patrollingEnabled = !this.patrollingEnabled;
 
         if (OnTogglePatrol != null)
         {

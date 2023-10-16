@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class Patrol : MonoBehaviour
 {
     public List<Transform> patrolPoints;
+    [SerializeField]
     private int indexOfNextPatrolPoint = 0;
     private UnityEngine.AI.NavMeshAgent agent;
 
@@ -21,7 +22,7 @@ public class Patrol : MonoBehaviour
         // approaches a destination point).
         agent.autoBraking = false;
 
-        patrolling = GameManager.instance.partollingEnabled;
+        patrolling = GameManager.instance.patrollingEnabled;
 
         GotoNextPoint();
 
@@ -48,7 +49,7 @@ public class Patrol : MonoBehaviour
 
     void Update()
     {
-        if (GameManager.instance.partollingEnabled && patrolling)
+        if (patrolling)
         {
             // Choose the next destination point when the agent gets
             // close to the current one.
@@ -56,14 +57,6 @@ public class Patrol : MonoBehaviour
             // calculating a path.
             if (!agent.pathPending && agent.remainingDistance < 0.5f)
                 GotoNextPoint();
-        }
-        else if (GameManager.instance.partollingEnabled && !patrolling)
-        {
-            StartPatrolling();
-        }
-        else if (!GameManager.instance.partollingEnabled && patrolling)
-        {
-            StopPatrolling();
         }
     }
 
@@ -75,12 +68,20 @@ public class Patrol : MonoBehaviour
 
     public void StartPatrolling()
     {
+        Debug.Log($"agent.remainingDistance");
         agent.SetDestination(patrolPoints[indexOfNextPatrolPoint].position);
         patrolling = true;
     }
 
     private void TogglePatrolling()
     {
-        Debug.Log("Patrolling has been toggled");
+       if (patrolling)
+        {
+            StopPatrolling();
+        }
+        else
+        {
+            StartPatrolling();
+        }
     }
 }

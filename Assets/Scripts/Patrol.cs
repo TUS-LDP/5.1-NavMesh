@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 public class Patrol : MonoBehaviour
 {
     public List<Transform> patrolPoints;
+
     [SerializeField]
     private int indexOfNextPatrolPoint = 0;
     private UnityEngine.AI.NavMeshAgent agent;
@@ -22,15 +23,34 @@ public class Patrol : MonoBehaviour
         // approaches a destination point).
         agent.autoBraking = false;
 
-        patrolling = GameManager.instance.patrollingEnabled;
+        // Initially set patrolling to true
+        patrolling = true;
 
-        GotoNextPoint();
-
-        // Register to be notified of the OnTogglePatrol event and when
-        // this event occurs call the TogglePatrolling function;
-        GameManager.instance.OnTogglePatrol += TogglePatrolling;
+        GotoFirstPoint();  
     }
 
+    private void OnEnable()
+    {
+        // Register to be notified of the OnTogglePatrol event and when
+        // this event occurs call the TogglePatrolling function
+        GameManager.OnTogglePatrol += TogglePatrolling;
+    }
+
+    private void OnDisable()
+    {
+        // Derigister (unsubscribe) from the event
+        GameManager.OnTogglePatrol -= TogglePatrolling;
+    }
+
+    void GotoFirstPoint()
+    {
+        // Returns if no points have been set up
+        if (patrolPoints.Count == 0)
+            return;
+
+        // Set the agent to go to the currently selected destination.
+        agent.SetDestination(patrolPoints[0].position);
+    }
 
     void GotoNextPoint()
     {
@@ -38,12 +58,12 @@ public class Patrol : MonoBehaviour
         if (patrolPoints.Count == 0)
             return;
 
-        // Set the agent to go to the currently selected destination.
-        agent.SetDestination(patrolPoints[indexOfNextPatrolPoint].position);
-
         // Choose the next point in the array as the destination,
         // cycling to the start if necessary.
         indexOfNextPatrolPoint = (indexOfNextPatrolPoint + 1) % patrolPoints.Count;
+
+        // Set the agent to go to the currently selected destination.
+        agent.SetDestination(patrolPoints[indexOfNextPatrolPoint].position);
     }
 
 
@@ -68,7 +88,6 @@ public class Patrol : MonoBehaviour
 
     public void StartPatrolling()
     {
-        Debug.Log($"agent.remainingDistance");
         agent.SetDestination(patrolPoints[indexOfNextPatrolPoint].position);
         patrolling = true;
     }
